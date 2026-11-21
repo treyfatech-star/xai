@@ -96,8 +96,10 @@ def pareto_example(front: list[dict], options: list[dict], budget: float) -> str
     for o in options:
         ax.scatter(o["total_cost"] / 1e6, o["worst_delay_days"], marker="*", s=220, color=SERIES[1], edgecolor=INK, lw=0.6,
                    zorder=3)
+        right = o["total_cost"] > pf.cost.min() + 0.6 * (pf.cost.max() - pf.cost.min())
         ax.annotate(f"#{o['rank']} {o['label'].replace('_', ' ')}", (o["total_cost"] / 1e6, o["worst_delay_days"]),
-                    xytext=(6, 6), textcoords="offset points", fontsize=8, color=INK)
+                    xytext=(-8 if right else 8, 8), textcoords="offset points", fontsize=8, color=INK,
+                    ha="right" if right else "left")
     if budget <= 1.5 * pf.cost.max():
         ax.axvline(budget / 1e6, color=INK2, ls="--", lw=1)
     ax.set_xlabel("Total expected cost (N million, 2024 prices)", color=INK2)
