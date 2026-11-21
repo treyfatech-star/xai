@@ -13,3 +13,4 @@ models/*
 !models/.gitkeep
 experiments/results/*
 !experiments/results/.gitkeep
+.env

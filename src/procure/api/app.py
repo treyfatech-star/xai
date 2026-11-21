@@ -10,6 +10,7 @@ GET  /health
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from flask import Flask, g, jsonify, request
@@ -112,7 +113,8 @@ def main() -> None:
     with factory() as s:
         seed_reference(s, eng.store.transactions, eng.store.registry())
         s.commit()
-    create_app(engine=eng).run(host=cfg["host"], port=cfg["port"])
+    host = os.environ.get("PROCURE_API_HOST", cfg["host"])  # 0.0.0.0 inside Docker
+    create_app(engine=eng).run(host=host, port=cfg["port"])
 
 
 if __name__ == "__main__":

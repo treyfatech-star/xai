@@ -1,0 +1,54 @@
+# docker compose up --build    -> dashboard http://localhost:8501, API http://localhost:5000
+# Data, models, results and the SQLite database are kept in the project folders on the host.
+x-app: &app
+  build: .
+  image: procure-xai:latest
+  env_file:
+    - path: .env
+      required: false
+  environment:
+    PROCURE_API_HOST: 0.0.0.0
+  volumes:
+    - ./data:/app/data
+    - ./models:/app/models
+    - ./experiments/results:/app/experiments/results
+
+services:
+  init:
+    <<: *app
+    command: ["init"]
+    restart: "no"
+
+  api:
+    <<: *app
+    command: ["api"]
+    ports: ["5000:5000"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  dashboard:
+    <<: *app
+    command: ["dashboard"]
+    ports: ["8501:8501"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # Optional: docker compose --profile experiments run --rm experiments
+  experiments:
+    <<: *app
+    command: ["experiments"]
+    profiles: ["experiments"]
