@@ -1,0 +1,54 @@
+# Approximate LGA headquarters coordinates (decimal degrees) for distance and
+# conflict-radius features. APPROXIMATE - replace with official NBS/OSGOF centroids
+# for the final thesis run. aliases map common spellings to the canonical name.
+state_aliases:
+  Adamawa: [adamawa state, adamawa, adamawa st]
+  Bauchi: [bauchi state, bauchi]
+  Borno: [borno state, borno, bornu]
+  Gombe: [gombe state, gombe]
+  Taraba: [taraba state, taraba]
+  Yobe: [yobe state, yobe]
+
+lgas:
+  Adamawa:
+    Yola North: {lat: 9.23, lon: 12.46, aliases: [jimeta, yola-north]}
+    Yola South: {lat: 9.20, lon: 12.49, aliases: [yola, yola-south]}
+    Mubi North: {lat: 10.27, lon: 13.27, aliases: [mubi]}
+    Numan: {lat: 9.47, lon: 12.03, aliases: []}
+    Ganye: {lat: 8.43, lon: 12.05, aliases: []}
+    Michika: {lat: 10.62, lon: 13.39, aliases: []}
+  Bauchi:
+    Bauchi: {lat: 10.31, lon: 9.84, aliases: [bauchi lga]}
+    Katagum: {lat: 11.68, lon: 10.19, aliases: [azare]}
+    Misau: {lat: 11.31, lon: 10.47, aliases: []}
+    Tafawa Balewa: {lat: 9.76, lon: 9.56, aliases: [tafawa-balewa]}
+    Ningi: {lat: 11.07, lon: 9.57, aliases: []}
+    Alkaleri: {lat: 10.27, lon: 10.33, aliases: []}
+  Borno:
+    Maiduguri: {lat: 11.83, lon: 13.15, aliases: [maiduguri metropolitan, mmc]}
+    Gwoza: {lat: 11.08, lon: 13.69, aliases: []}
+    Bama: {lat: 11.52, lon: 13.69, aliases: []}
+    Biu: {lat: 10.61, lon: 12.19, aliases: []}
+    Monguno: {lat: 12.67, lon: 13.61, aliases: []}
+    Dikwa: {lat: 12.03, lon: 13.92, aliases: []}
+  Gombe:
+    Gombe: {lat: 10.29, lon: 11.17, aliases: [gombe lga]}
+    Billiri: {lat: 9.86, lon: 11.22, aliases: []}
+    Kaltungo: {lat: 9.81, lon: 11.31, aliases: []}
+    Dukku: {lat: 10.82, lon: 10.77, aliases: []}
+    Funakaye: {lat: 10.85, lon: 11.43, aliases: [bajoga]}
+    Nafada: {lat: 11.10, lon: 11.33, aliases: []}
+  Taraba:
+    Jalingo: {lat: 8.89, lon: 11.36, aliases: []}
+    Wukari: {lat: 7.87, lon: 9.78, aliases: []}
+    Takum: {lat: 7.26, lon: 9.98, aliases: []}
+    Bali: {lat: 7.86, lon: 10.97, aliases: []}
+    Sardauna: {lat: 6.70, lon: 11.26, aliases: [gembu]}
+    Zing: {lat: 8.99, lon: 11.75, aliases: []}
+  Yobe:
+    Damaturu: {lat: 11.75, lon: 11.96, aliases: []}
+    Potiskum: {lat: 11.71, lon: 11.08, aliases: []}
+    Bade: {lat: 12.87, lon: 11.04, aliases: [gashua]}
+    Nguru: {lat: 12.88, lon: 10.45, aliases: []}
+    Geidam: {lat: 12.89, lon: 11.93, aliases: []}
+    Gujba: {lat: 11.27, lon: 12.01, aliases: [buni yadi]}

@@ -1,0 +1,60 @@
+# Compliance / eligibility rules (Public Procurement Act 2007 and BPP guidance).
+# scope: supplier -> evaluated once per candidate supplier (variables: supplier, request, params)
+#        set      -> evaluated once on the eligible set   (variables: n_eligible, request, params)
+# action: exclude | flag
+# condition: a safe boolean expression (no function calls except those whitelisted in engine.py)
+# reason: plain-English template; {placeholders} are filled from the same variables.
+
+params:
+  # Upper contract-value limits (naira) per procurement method.
+  # ILLUSTRATIVE values - verify against the current BPP thresholds circular before use.
+  method_thresholds:
+    request_for_quotation: 5000000
+    selective_tendering: 50000000
+    direct_procurement: 10000000
+    open_competitive: 1.0e+15             # no upper limit
+  max_failure_rate: 0.30
+  min_eligible_suppliers: 2
+
+rules:
+  - id: R1
+    description: Supplier must be registered with BPP and not debarred (PPA 2007 s.16, s.58).
+    scope: supplier
+    condition: "not supplier.registered or supplier.debarred"
+    action: exclude
+    reason: "{supplier.supplier_id} is not registered with the Bureau of Public Procurement or is debarred."
+
+  - id: R2
+    description: Bid value must not exceed the value limit of the chosen procurement method.
+    scope: supplier
+    condition: "supplier.bid_value > params.method_thresholds[request.method]"
+    action: exclude
+    reason: "{supplier.supplier_id} bid of N{supplier.bid_value:,.0f} is above the N{params.method_thresholds[request.method]:,.0f} limit for {request.method}."
+
+  - id: R3
+    description: Supplier must hold a valid tax clearance certificate and CAC registration (PPA 2007 s.16(6)).
+    scope: supplier
+    condition: "not supplier.tax_clearance or not supplier.cac"
+    action: exclude
+    reason: "{supplier.supplier_id} has no valid tax clearance certificate or CAC registration on file."
+
+  - id: R4
+    description: Competition check - only one eligible supplier remains.
+    scope: set
+    condition: "n_eligible > 0 and n_eligible < params.min_eligible_suppliers"
+    action: flag
+    reason: "Only one supplier is eligible, so there is no competition. Consider re-advertising or documenting a direct-procurement justification."
+
+  - id: R5
+    description: Poor delivery history - past failure rate above the limit.
+    scope: supplier
+    condition: "supplier.past_failure_rate > params.max_failure_rate"
+    action: flag
+    reason: "{supplier.supplier_id} failed {supplier.past_failure_rate:.0%} of past orders (limit {params.max_failure_rate:.0%})."
+
+  - id: R6
+    description: No supplier passed the eligibility rules.
+    scope: set
+    condition: "n_eligible == 0"
+    action: flag
+    reason: "No supplier is eligible for this request. Review the exclusion reasons, widen the supplier list or change the procurement method."

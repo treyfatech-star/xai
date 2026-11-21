@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+# Never commit data (NDPA 2023) or trained artefacts
+data/raw/*
+data/interim/*
+data/processed/*
+data/*.db
+!data/**/.gitkeep
+models/*
+!models/.gitkeep
+experiments/results/*
+!experiments/results/.gitkeep

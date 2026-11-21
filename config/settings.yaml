@@ -1,0 +1,173 @@
+# Central configuration. No magic numbers in code: everything tunable is here.
+project:
+  name: procure-xai
+  version: "0.1.0"
+
+seed: 42
+
+paths:
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  models_dir: models
+  results_dir: experiments/results
+  docs_dir: docs
+  rules_file: config/rules.yaml
+  geo_file: config/geo.yaml
+  db_url: sqlite:///data/procure.db        # MySQL: mysql+pymysql://user:pass@host/procure
+
+raw_files:                                  # glob patterns inside raw_dir
+  ocds_json: "ocds*.json"                   # NOCOPO / OCDS release packages
+  contracts_csv: "contracts*.csv"           # flat contract exports
+  supplier_registry_csv: "supplier_registry*.csv"
+  acled_csv: "acled*.csv"
+  macro_csv: "macro*.csv"                   # month, cpi, exchange_rate_ngn_usd, fuel_price_ngn_litre
+
+region:
+  states: [Adamawa, Bauchi, Borno, Gombe, Taraba, Yobe]
+
+split:
+  train_years: [2019, 2020, 2021, 2022]
+  val_years: [2023]
+  test_years: [2024]
+
+data:
+  base_currency: NGN
+  dedup_keys: [supplier_id, item, date, value]
+  outlier_iqr_k: 3.0                 # flag (not remove) beyond k*IQR on log scale
+  failure_delay_days: 30             # failed = late > 30 days OR short-delivered OR rejected
+  on_time_tolerance_days: 7          # delivered within 7 days of due date counts as on time
+  outcome_lag_days: 30               # outcome of a contract becomes known ~30 days + delay after signing
+  rainy_months: [5, 6, 7, 8, 9, 10]
+  conflict_radius_km: 50
+  conflict_window_days: 90
+  cpi_base_year: 2024                # real prices expressed in 2024 naira
+  history_prior_strength: 5          # Bayesian shrinkage pseudo-count for supplier rates
+  history_priors:
+    on_time_rate: 0.6
+    failure_rate: 0.15
+    quality_mean: 3.5
+    price_index: 0.0
+  reference_years: [2019, 2020, 2021, 2022]  # item reference prices from training years only
+  anonymisation_salt_env: PROCURE_ANON_SALT
+  anonymisation_default_salt: "procure-xai-dev-salt"
+
+synthetic:                           # used ONLY where real outcomes are missing
+  delay:
+    base_mean_days: 5.0
+    rainy_season_add_days: 5.0
+    per_conflict_event_days: 0.4
+    conflict_cap_events: 40
+    per_100km_days: 1.5
+    gamma_shape: 2.0
+  quality:
+    mean: 3.6
+    sd: 0.6
+    rainy_season_effect: -0.15
+    per_conflict_event: -0.01
+    min: 1.0
+    max: 5.0
+  short_delivery:
+    base_prob: 0.04
+    per_conflict_event: 0.003
+    per_100km: 0.01
+  rejection_quality_below: 2.0
+
+demo_raw:                            # simulated raw data, used only when data/raw has no real files
+  n_suppliers: 160
+  n_transactions: 7000
+  years: [2019, 2020, 2021, 2022, 2023, 2024]
+  missing_outcome_frac: {2019: 0.55, 2020: 0.45, 2021: 0.35, 2022: 0.30, 2023: 0.25, 2024: 0.20}
+  acled_events_per_year: 900
+  name_variant_prob: 0.15
+  duplicate_frac: 0.01
+  usd_row_frac: 0.03
+  missing_bidders_frac: 0.05
+  missing_method_frac: 0.02
+
+features:
+  numeric: [log_item_ref_price, log_quantity, n_bidders, supplier_experience, past_on_time_rate, past_failure_rate,
+            past_quality_mean, past_price_index, distance_km, same_state, rainy_season,
+            conflict_events_90d, conflict_fatalities_90d]
+  categorical: [item_category, item, method, delivery_state]
+  onehot_min_frequency: 5
+
+models:
+  cost:    {target: unit_cost_real, task: regression, log_target: true}
+  delay:   {target: delay_days, task: regression, log_target: false}
+  failure: {target: failed, task: classification, log_target: false}
+  classification_threshold: 0.5
+  xgb_fixed:
+    tree_method: hist
+    n_jobs: 4
+  optuna:
+    n_trials: 50
+    space:
+      n_estimators: [100, 600]
+      max_depth: [2, 8]
+      learning_rate: [0.01, 0.3]
+      subsample: [0.6, 1.0]
+      colsample_bytree: [0.5, 1.0]
+      min_child_weight: [1, 20]
+      reg_lambda: [0.001, 10.0]
+  cv_folds:                          # expanding-window time-series CV on train+val
+    - {train: [2019, 2020], valid: [2021]}
+    - {train: [2019, 2020, 2021], valid: [2022]}
+    - {train: [2019, 2020, 2021, 2022], valid: [2023]}
+  eval_seeds: [42, 43, 44, 45, 46]
+  bootstrap_n: 1000                  # paired bootstrap for XGBoost-vs-baseline differences
+  random_forest: {n_estimators: 300, min_samples_leaf: 3}
+  logistic: {max_iter: 2000, C: 1.0}
+  quick_mode_env: PROCURE_QUICK      # set =1 to use quick_n_trials (smoke runs only)
+  quick_n_trials: 5
+
+optimise:
+  k_max: 3                           # at most k suppliers per order
+  min_share: 0.05                    # shares below 5% are dropped by the repair operator
+  pop_size: 100
+  n_gen: 200
+  sbx_prob: 0.9
+  sbx_eta: 15
+  pm_eta: 20
+  quantity_grid: [0.05, 0.1, 0.25, 0.5, 0.75, 1.0]   # share grid for quantity-dependent predictions
+  archive_max_size: 300              # bounded external archive (crowding-distance truncation), all methods
+  hv_ref_point: 1.1                  # in normalised objective space
+  n_eval_requests: 30
+  budget_slack: 1.25                 # sampled request budget = actual contract value x slack
+  min_candidates: 3
+  max_candidates: 15
+  weighted_sum_n_weights: 10
+  scalability: {max_candidates: 60, k: 5}   # second benchmark setting: larger search space
+  baseline_ga_pop: 50
+
+explain:
+  top_k: 3
+  narrative_exclude:                 # item identity explains price level, not supplier differences
+    cost: [item, item_category, log_item_ref_price]
+  max_front_points_returned: 300
+  lime_n_predictions: 200
+  lime_num_samples: 1000
+  options: [lowest_cost, fastest, most_reliable, balanced]
+  max_options: 5
+  min_options: 3
+
+api:
+  host: 127.0.0.1
+  port: 5000
+  token_max_age_seconds: 28800
+  secret_key_env: PROCURE_SECRET_KEY
+  demo_password_env: PROCURE_DEMO_PASSWORD
+  demo_users:                        # role accounts only - no personal names (NDPA 2023)
+    - {username: officer1, role: officer}
+    - {username: logistics1, role: logistics_manager}
+    - {username: admin1, role: administrator}
+  permissions:
+    officer: [recommend, view_recommendation, decide]
+    logistics_manager: [view_recommendation, recommend]
+    administrator: [recommend, view_recommendation, decide, view_audit]
+  latency_budget_seconds: 10
+
+experiments:
+  figure_dpi: 300
+  n_backtest: 100                    # sampled real 2024 contracts for the back-test
+  latency_requests: 30               # end-to-end recommend() timings

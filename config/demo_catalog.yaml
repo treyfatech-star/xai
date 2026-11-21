@@ -1,0 +1,83 @@
+# Catalogue and "true process" for the SIMULATED raw data generator (procure.data.demo_raw).
+# Used only when data/raw contains no real files. Prices are indicative 2024 naira.
+items:
+  medical:
+    "Paracetamol 500mg (carton)": {price: 25000, qty: [20, 400]}
+    "Malaria RDT kit (box of 25)": {price: 60000, qty: [10, 300]}
+    "Artemether-lumefantrine (box)": {price: 45000, qty: [10, 400]}
+    "Surgical gloves (box)": {price: 12000, qty: [20, 600]}
+    "Hospital bed": {price: 350000, qty: [2, 60]}
+  food:
+    "Rice 50kg bag": {price: 80000, qty: [20, 2000]}
+    "Maize 100kg bag": {price: 70000, qty: [20, 2000]}
+    "Beans 100kg bag": {price: 120000, qty: [10, 1000]}
+    "Vegetable oil 25L": {price: 55000, qty: [10, 800]}
+  construction:
+    "Cement 50kg bag": {price: 9000, qty: [100, 6000]}
+    "Iron rod 12mm (length)": {price: 12000, qty: [100, 5000]}
+    "Roofing sheets (bundle)": {price: 150000, qty: [5, 300]}
+    "Sharp sand (trip)": {price: 60000, qty: [2, 120]}
+  fuel:
+    "Diesel (litre)": {price: 1200, qty: [500, 40000]}
+    "Petrol (litre)": {price: 900, qty: [500, 40000]}
+  ict:
+    "Laptop computer": {price: 850000, qty: [2, 80]}
+    "Laser printer": {price: 350000, qty: [1, 40]}
+    "Desktop computer": {price: 700000, qty: [2, 80]}
+    "Solar inverter 5kVA": {price: 1500000, qty: [1, 20]}
+  office:
+    "A4 paper (ream)": {price: 7000, qty: [20, 2000]}
+    "Office chair": {price: 85000, qty: [5, 200]}
+    "Printer toner cartridge": {price: 60000, qty: [5, 200]}
+  agriculture:
+    "NPK fertiliser 50kg bag": {price: 45000, qty: [50, 4000]}
+    "Improved maize seed 10kg": {price: 15000, qty: [50, 3000]}
+    "Knapsack sprayer": {price: 25000, qty: [10, 500]}
+  vehicle_parts:
+    "Vehicle tyre": {price: 150000, qty: [4, 120]}
+    "Vehicle battery": {price: 120000, qty: [2, 80]}
+
+category_lead_days: {medical: 1, food: 0, construction: 2, fuel: 0, ict: 6, office: 1, agriculture: 2, vehicle_parts: 4}
+
+state_weights:        # share of contracts delivered to each state
+  Adamawa: 0.18
+  Bauchi: 0.16
+  Borno: 0.26
+  Gombe: 0.13
+  Taraba: 0.13
+  Yobe: 0.14
+
+conflict_state_weights: {Adamawa: 0.15, Bauchi: 0.05, Borno: 0.55, Gombe: 0.03, Taraba: 0.07, Yobe: 0.15}
+conflict_hot_lgas: {Gwoza: 4.0, Bama: 3.0, Monguno: 3.0, Dikwa: 2.5, Michika: 2.0, Geidam: 2.0, Gujba: 2.0}
+conflict_jitter_deg: 0.15
+conflict_mean_fatalities: 2.0
+
+annual_inflation: {2018: 0.121, 2019: 0.114, 2020: 0.132, 2021: 0.170, 2022: 0.188, 2023: 0.247, 2024: 0.330}
+exchange_rate: {2018: 306, 2019: 306, 2020: 380, 2021: 410, 2022: 430, "2023H1": 461, "2023H2": 800, 2024: 1500}
+fuel_price: {2018: 145, 2019: 145, 2020: 150, 2021: 165, 2022: 175, "2023H1": 190, "2023H2": 600, 2024: 1000}
+
+name_prefixes: [Sahel, Gongola, Benue, Mandara, Lake Chad, Arewa, Hawul, Kilba, Jos-Plateau, Savannah,
+                Northern, Sardauna, Yankari, Chibok, Mambilla, Komadugu, Nguru, Fika, Bura, Lamido]
+name_middles: [Global, Ventures, Integrated, Resources, Allied, General, Star, Unique, Prime, Royal]
+name_suffixes: [Enterprises, Limited, Nigeria Ltd, Company, Concepts, Services Ltd, Trading Co]
+
+simulation:
+  supplier_same_state_weight: 3.0
+  reliability_beta: [5.0, 2.0]
+  supplier_markup_sd: 0.10
+  price_noise_sd: 0.10
+  quantity_discount_exp: -0.03
+  remote_premium_per_km: 0.0004
+  conflict_premium_per_event: 0.004
+  direct_method_premium: 0.08
+  bidder_discount_per_bidder: 0.015
+  delay_base_days: 2.0
+  delay_per_km: 0.015
+  delay_rainy_days: 5.0
+  delay_per_conflict_event: 0.5
+  delay_unreliability_days: 18.0
+  delay_gamma_shape: 2.0
+  quality_sd: 0.5
+  short_base: 0.02
+  short_unreliability: 0.15
+  short_per_conflict: 0.003

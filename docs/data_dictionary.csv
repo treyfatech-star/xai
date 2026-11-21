@@ -1,0 +1,52 @@
+name,type,source,meaning
+ocid,object,NOCOPO/OCDS,Open contracting ID of the procurement record.
+date,datetime64[ns],NOCOPO/OCDS,Date the contract was signed.
+supplier_name,object,NOCOPO/OCDS,Registered business name (kept only in the access-controlled supplier table).
+supplier_state,str,NOCOPO/OCDS,State where the supplier is based.
+supplier_lga,str,NOCOPO/OCDS,Local government area where the supplier is based.
+item,str,NOCOPO/OCDS,Item bought.
+item_category,str,NOCOPO/OCDS,"Broad group of the item (medical, food, fuel, ...)."
+quantity,int64,NOCOPO/OCDS,Number of units ordered.
+unit,object,NOCOPO/OCDS,Unit of measure.
+value,float64,NOCOPO/OCDS,Contract value in naira at the time of signing.
+currency,str,derived,Always NGN after cleaning (USD converted at that month's rate).
+method,str,NOCOPO/OCDS,"Procurement method (open competitive, selective, RFQ, direct)."
+n_bidders,float64,NOCOPO/OCDS,Number of suppliers that bid.
+delivery_state,str,NOCOPO/OCDS,State where the goods must be delivered.
+delivery_lga,str,NOCOPO/OCDS,Local government area where the goods must be delivered.
+delay_days,float64,records / synthetic,Days delivered after the agreed date.
+quality_score,float64,records / synthetic,Inspection score from 1 (very poor) to 5 (excellent).
+short_delivered,bool,records / synthetic,True if fewer units were delivered than ordered.
+rejected,bool,records / synthetic,True if the delivery was rejected at inspection.
+source,object,derived,Raw file the row came from.
+supplier_id,str,derived,Anonymised supplier ID built from the normalised name and state.
+buyer_id,str,derived,"Anonymised ID of the buying ministry, department or agency."
+is_imputed,bool,derived,True if any predictor on this row was filled in by median/mode.
+imputed_cols,str,derived,Which predictors were filled in.
+cost_outlier,bool,derived,"Unit price is unusually high or low for this item (kept, flagged)."
+delay_outlier,bool,derived,"Delay is unusually long (kept, flagged)."
+registered,bool,supplier registry,Registered with the Bureau of Public Procurement.
+debarred,bool,supplier registry,Currently debarred from public contracts.
+tax_clearance,bool,supplier registry,Holds a valid tax clearance certificate.
+cac,bool,supplier registry,Registered with the Corporate Affairs Commission.
+in_registry,bool,derived,Supplier was found in the registry file.
+has_real_outcome,bool,derived,True if all outcomes on this row were recorded.
+year,int32,derived,Year of signing.
+month,int32,derived,Month of signing (1-12).
+unit_cost_nominal,float64,derived,Price per unit in naira at the time of signing.
+unit_cost_real,float64,derived + macro CPI,Price per unit in 2024 naira (inflation-adjusted).
+log_quantity,float64,derived,Natural log of quantity.
+distance_km,float64,derived + LGA coordinates,"Straight-line distance from supplier LGA to delivery LGA, km."
+same_state,int64,derived,1 if supplier and delivery are in the same state.
+rainy_season,int64,derived,1 if signed in the rainy season (May-October).
+conflict_events_90d,float64,ACLED,Security incidents within 50 km of the delivery LGA in the previous 90 days.
+conflict_fatalities_90d,float64,ACLED,Deaths from those incidents.
+is_synthetic,bool,derived,"True if any outcome on this row was generated, not recorded."
+failed,int64,derived,"True if more than 30 days late, short-delivered or rejected."
+supplier_experience,float64,derived,Number of earlier contracts with this supplier.
+past_price_index,float64,derived,How the supplier's earlier prices compared with the typical price (log ratio).
+past_on_time_rate,float64,derived,"Share of the supplier's earlier, completed orders delivered on time (smoothed)."
+past_failure_rate,float64,derived,"Share of the supplier's earlier, completed orders that failed (smoothed)."
+past_quality_mean,float64,derived,Average inspection score of the supplier's earlier orders (smoothed).
+past_outcomes_known,float64,derived,Number of earlier orders whose outcome was known.
+log_item_ref_price,float64,derived,Log of the typical 2024-naira price of the item (training years).

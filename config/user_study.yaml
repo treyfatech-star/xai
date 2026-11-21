@@ -1,0 +1,61 @@
+# User-study pack content (Phase 6). 5 scenarios, SUS (Brooke, 1996) and a trust/understanding
+# questionnaire on a 5-point Likert scale, for 8-15 procurement officers.
+participants: "8-15 procurement officers from MDAs in the six North-East states"
+likert: ["1 = Strongly disagree", "2 = Disagree", "3 = Neutral", "4 = Agree", "5 = Strongly agree"]
+
+scenarios:
+  - id: S1
+    title: Emergency food supply to a conflict-affected LGA in the rainy season
+    request: {item: "Rice 50kg bag", item_category: food, quantity: 400, delivery_state: Borno, delivery_lga: Gwoza,
+              method: selective_tendering, budget: 45000000, date: "2024-07-15"}
+    task: "Choose an option and explain to a colleague why delivery is expected to be late."
+  - id: S2
+    title: Routine medical commodities for a state capital
+    request: {item: "Malaria RDT kit (box of 25)", item_category: medical, quantity: 120, delivery_state: Adamawa,
+              delivery_lga: Yola North, method: request_for_quotation, budget: 9000000, date: "2024-02-10"}
+    task: "One supplier is excluded. Find the rule and the reason, then accept or override."
+  - id: S3
+    title: Construction materials with a tight budget
+    request: {item: "Cement 50kg bag", item_category: construction, quantity: 3000, delivery_state: Yobe,
+              delivery_lga: Geidam, method: open_competitive, budget: 24000000, date: "2024-09-01"}
+    task: "Decide whether splitting the order between suppliers is worth the extra cost."
+  - id: S4
+    title: Agricultural inputs before the planting season
+    request: {item: "NPK fertiliser 50kg bag", item_category: agriculture, quantity: 1500, delivery_state: Gombe,
+              delivery_lga: Dukku, method: open_competitive, budget: 80000000, date: "2024-04-05"}
+    task: "Compare the lowest-cost and most-reliable options and pick one for an urgent delivery."
+  - id: S5
+    title: ICT equipment for a remote LGA
+    request: {item: "Laptop computer", item_category: ict, quantity: 25, delivery_state: Taraba,
+              delivery_lga: Sardauna, method: selective_tendering, budget: 30000000, date: "2024-06-20"}
+    task: "Explain in your own words what drives the predicted failure risk, then record a decision."
+
+sus_items:
+  - I think that I would like to use this system frequently.
+  - I found the system unnecessarily complex.
+  - I thought the system was easy to use.
+  - I think that I would need the support of a technical person to be able to use this system.
+  - I found the various functions in this system were well integrated.
+  - I thought there was too much inconsistency in this system.
+  - I would imagine that most people would learn to use this system very quickly.
+  - I found the system very cumbersome to use.
+  - I felt very confident using the system.
+  - I needed to learn a lot of things before I could get going with this system.
+
+trust_items:
+  understanding:
+    - I understood why the system ranked the options the way it did.
+    - The reasons given for each supplier were clear and in plain language.
+    - I could explain a recommendation to my supervisor using the system's explanations.
+  trust:
+    - I trust the cost estimates the system gives.
+    - I trust the delivery-delay and failure-risk estimates the system gives.
+    - The explanations made me more confident in the recommendations.
+  usefulness:
+    - The options helped me see trade-offs between cost, speed, quality and reliability.
+    - The compliance checks (excluded suppliers and warnings) were useful.
+    - The system would improve the quality of procurement decisions in my organisation.
+  control:
+    - I felt in control of the final decision.
+    - I could easily override a recommendation when I disagreed with it.
+    - I would report it if the system's recommendation looked wrong.
