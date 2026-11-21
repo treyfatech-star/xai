@@ -190,7 +190,7 @@ for a in o["allocations"]:
                          color_discrete_map={"makes it worse": "#c0392b", "makes it better": "#27ae60"},
                          labels={"effect": f"Effect ({unit})", "label": "", "direction": ""})
             bar.update_layout(height=230, margin=dict(l=0, r=0, t=10, b=0))
-            st.plotly_chart(bar, use_container_width=True)
+            st.plotly_chart(bar, use_container_width=True, config={"displayModeBar": False})
             for sentence in a["reasons"][m][1:]:
                 st.caption("- " + sentence)
 
