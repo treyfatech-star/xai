@@ -8,11 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     MPLBACKEND=Agg
 
-# libgomp1: OpenMP runtime needed by XGBoost
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
-
+# No apt packages needed: the XGBoost and scikit-learn wheels bundle their own OpenMP runtime.
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt

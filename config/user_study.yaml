@@ -11,8 +11,8 @@ scenarios:
     task: "Choose an option and explain to a colleague why delivery is expected to be late."
   - id: S2
     title: Routine medical commodities for a state capital
-    request: {item: "Malaria RDT kit (box of 25)", item_category: medical, quantity: 120, delivery_state: Adamawa,
-              delivery_lga: Yola North, method: request_for_quotation, budget: 9000000, date: "2024-02-10"}
+    request: {item: "Malaria RDT kit (box of 25)", item_category: medical, quantity: 60, delivery_state: Adamawa,
+              delivery_lga: Yola North, method: request_for_quotation, budget: 5000000, date: "2024-02-10"}
     task: "One supplier is excluded. Find the rule and the reason, then accept or override."
   - id: S3
     title: Construction materials with a tight budget

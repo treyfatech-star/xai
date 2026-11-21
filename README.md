@@ -34,6 +34,24 @@ make api          # REST API on http://127.0.0.1:5000
 make dashboard    # Streamlit dashboard on http://localhost:8501
 ```
 
+### Run with Docker
+
+```bash
+cp .env.example .env          # then edit the password / secret key
+docker compose up --build     # dashboard http://localhost:8501, API http://localhost:5000
+```
+
+On the first start the `init` service builds the dataset and trains the models (about 3–4 minutes). Later
+starts skip this. `data/`, `models/`, `experiments/results/` and the SQLite database stay in the project
+folders on your machine, so real files you put in `data/raw/` are used. To retrain after changing data,
+delete `data/processed/*.parquet` and `models/bundle.joblib`, then run `docker compose up` again. Other commands:
+
+```bash
+docker compose --profile experiments run --rm experiments   # reproduce every thesis result
+docker compose run --rm api test                            # run the test suite in the image
+docker compose down                                         # stop
+```
+
 Demo accounts (role accounts, no personal names): `officer1`, `logistics1` and `admin1`. Their password is taken from
 `PROCURE_DEMO_PASSWORD` (default `change-me`). In production, set `PROCURE_SECRET_KEY` and `PROCURE_ANON_SALT`.
 
